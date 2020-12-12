@@ -54,4 +54,15 @@ router.delete('/projects/:id', validateProjectID(), async (request, response) =>
     }
 })
 
+// project actions
+router.get('/projects/:id/actions', validateProjectID(), async (request, response) => {
+    try {
+        let projectActions = request.project.actions
+
+        return response.status(200).json(projectActions)
+    } catch (error) {
+        return response.status(500).json({"message": "something went wrong"})
+    }
+})
+
 module.exports = router

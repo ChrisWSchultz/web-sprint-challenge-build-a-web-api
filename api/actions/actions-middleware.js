@@ -1,4 +1,5 @@
 const Action = require('./actions-model')
+const Project = require('../projects/projects-model')
 
 function validateActionID() {
     return async (request, response, next) => {
@@ -23,11 +24,17 @@ function validatePostData() {
             completed: request.body.completed || false
         }
 
-        if(!data.project_id || !data.description || !data.notes) {
-            response.status(400).json({"message": "required data is missing, please check your action data"})
+        let project = await Project.get(data.project_id)
+
+        if(project) {
+            if (!data.project_id || !data.description || !data.notes) {
+                response.status(400).json({"message": "required data is missing, please check your action data"})
+            } else {
+                request.actionData = data
+                next()
+            }
         } else {
-            request.actionData = data
-            next()
+            response.status(400).json({"message": "invalid project id"})
         }
     }
 }
